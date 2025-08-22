@@ -197,7 +197,9 @@ function App() {
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                href="#mesa-de-regalos"
+                href="https://www.amazon.com.mx/registries/gl/guest-view/12CC37ZRV02PI?ref_=cm_sw_r_cp_ud_ggr-subnav-share_2G0Y4GFYE2TZ042YR2KN"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-primary font-cowboy"
               >
                 Ver opciones de regalos
