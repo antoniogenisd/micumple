@@ -69,6 +69,48 @@ function App() {
     }
   }
 
+  const addToCalendar = () => {
+    // Fecha del evento: 5 de Septiembre 2025, 6:00 PM
+    const eventDate = new Date(2025, 8, 5, 18, 0); // Mes 8 = Septiembre (0-indexed)
+    const eventEndDate = new Date(2025, 8, 5, 22, 0); // Termina a las 10:00 PM
+    
+    const eventTitle = 'Cumpleaños de Genis #28';
+    const eventDescription = 'Llevar más pisto';
+    const eventLocation = 'Salón Orcelliss (De rey Orihuela en Miacatlán)';
+    
+    // Formato para Google Calendar
+    const startDate = eventDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const endDate = eventEndDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    
+    // URL para Google Calendar
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventLocation)}`;
+    
+    // URL para Outlook/Apple Calendar (formato .ics)
+    const icsData = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Cumpleaños Genis//ES',
+      'BEGIN:VEVENT',
+      `DTSTART:${startDate}`,
+      `DTEND:${endDate}`,
+      `SUMMARY:${eventTitle}`,
+      `DESCRIPTION:${eventDescription}`,
+      `LOCATION:${eventLocation}`,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    
+    // Crear y descargar archivo .ics
+    const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'mi-cumpleanos-28.ics';
+    link.click();
+    
+    // También abrir Google Calendar como respaldo
+    window.open(googleCalendarUrl, '_blank');
+  };
+
   return (
     <div className="wooden-background">
       {/* Overlay sutil para mejorar legibilidad */}
@@ -150,13 +192,23 @@ function App() {
               <h2 className="card-title font-cowboy">
                 📅 Fecha y Hora
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-3 mb-6">
                 <p className="card-content font-cowboy">
                   Viernes, 5 de Septiembre
                 </p>
                 <p className="card-content font-cowboy">
                   6:00 PM
                 </p>
+              </div>
+              <div className="text-center">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => addToCalendar()}
+                  className="calendar-btn font-cowboy"
+                >
+                  📅 Agregar al Calendario
+                </motion.button>
               </div>
             </motion.div>
 
