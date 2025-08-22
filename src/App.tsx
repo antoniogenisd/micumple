@@ -5,6 +5,7 @@ import './App.css'
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false)
+  const [showCalendarModal, setShowCalendarModal] = useState(false)
 
   useEffect(() => {
     setIsLoaded(true)
@@ -106,6 +107,9 @@ function App() {
     link.href = URL.createObjectURL(blob);
     link.download = 'mi-cumpleanos-28.ics';
     link.click();
+    
+    // Mostrar modal con instrucciones
+    setShowCalendarModal(true);
     
     // También abrir Google Calendar como respaldo
     window.open(googleCalendarUrl, '_blank');
@@ -319,6 +323,38 @@ function App() {
       <div className="fixed top-4 right-4 text-4xl lg:text-5xl text-amber-900 z-20 animate-bounce" style={{ animationDelay: '0.5s' }}>🐄</div>
       <div className="fixed bottom-4 left-4 text-4xl lg:text-5xl text-amber-900 z-20 animate-bounce" style={{ animationDelay: '1s' }}>🎵</div>
       <div className="fixed bottom-4 right-4 text-4xl lg:text-5xl text-amber-900 z-20 animate-bounce" style={{ animationDelay: '1.5s' }}>🎁</div>
+
+      {/* Modal de instrucciones del calendario */}
+      {showCalendarModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowCalendarModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-4 border-amber-800"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-amber-900 mb-4 font-cowboy">
+                📅 Calendario
+              </h3>
+              <p className="text-gray-700 mb-6 text-lg">
+                Por favor abre el archivo descargado
+              </p>
+              <button
+                onClick={() => setShowCalendarModal(false)}
+                className="btn-primary font-cowboy"
+              >
+                ¡Entendido!
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Fuente personalizada */}
       <style>
