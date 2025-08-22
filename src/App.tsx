@@ -1,16 +1,17 @@
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 import './App.css'
-import { motion } from 'framer-motion';
 
 function App() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    setIsVisible(true);
-  }, []);
+    setIsLoaded(true)
+  }, [])
 
-   // Efecto de carga para animaciones
-   const containerVariants = {
+  // Animaciones de entrada
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -19,140 +20,256 @@ function App() {
         staggerChildren: 0.2
       }
     }
-  };
+  }
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+  const itemVariants: Variants = {
+    hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
-      opacity: 1
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
     }
-  };
+  }
+
+  const photoVariants: Variants = {
+    hidden: { scale: 0, rotate: -180 },
+    visible: {
+      scale: 1,
+      rotate: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    }
+  }
+
+  const numberVariants: Variants = {
+    hidden: { scale: 0, y: 50 },
+    visible: {
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        delay: 0.5
+      }
+    }
+  }
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget
+    const fallback = img.nextElementSibling as HTMLElement
+    if (fallback) {
+      img.style.display = 'none'
+      fallback.style.display = 'flex'
+    }
+  }
 
   return (
-    <div 
-      className="main min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden"
-    >
-      {/* Efecto de overlay para mejorar legibilidad */}
-      <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-      
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 bg-amber-50 bg-opacity-95 rounded-xl shadow-2xl p-6 md:p-8 max-w-md w-full border-4 border-amber-900 mx-4"
-        style={{ fontFamily: "'Rye', cursive" }}
-      >
-        {/* Encabezado con foto y número 28 */}
-        <motion.div 
-          variants={itemVariants}
-          className="text-center mb-6 md:mb-8"
+    <div className="wooden-background">
+      {/* Overlay sutil para mejorar legibilidad */}
+      <div className="overlay" />
+
+      {/* Contenido principal */}
+      <div className="main-content">
+        
+        {/* Header principal con foto y número */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isLoaded ? "visible" : "hidden"}
+          className="header-section"
         >
+          {/* Foto del cumpleañero */}
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-            className="mx-auto mb-4 md:mb-6 relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-amber-800 shadow-lg"
+            variants={photoVariants}
+            className="photo-container"
           >
-            {/* Aquí debes reemplazar con tu foto */}
-            <div className="w-full h-full bg-amber-200 flex items-center justify-center text-4xl md:text-6xl font-bold text-amber-900">
-              🎂
+            <div className="photo-frame">
+              {/* Tu foto real */}
+              <img 
+                src="/images/yo.jpg" 
+                alt="Foto del cumpleañero"
+                className="photo-image"
+                onError={handleImageError}
+              />
+              <div className="photo-fallback" style={{ display: 'none' }}>
+                🤠
+              </div>
             </div>
+            
+            {/* Decoración vaquera alrededor de la foto */}
+            <div className="photo-decoration top-left">⭐</div>
+            <div className="photo-decoration top-right">⭐</div>
+            <div className="photo-decoration bottom-left">⭐</div>
+            <div className="photo-decoration bottom-right">⭐</div>
           </motion.div>
-          
-          <motion.h1 
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
-            className="text-5xl md:text-6xl font-bold text-amber-900 mb-2"
+
+          {/* Número 28 */}
+          <motion.h1
+            variants={numberVariants}
+            className="birthday-number font-cowboy"
           >
-            28
+            #28
           </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="text-amber-800 text-lg md:text-xl"
+
+          {/* Título del cumpleaños */}
+          <motion.p
+            variants={itemVariants}
+            className="birthday-title font-cowboy"
           >
             ¡Es mi cumpleaños!
           </motion.p>
+          
+          <motion.p
+            variants={itemVariants}
+            className="birthday-subtitle font-cowboy"
+          >
+            Te invito a celebrar conmigo este día especial
+          </motion.p>
         </motion.div>
 
-        {/* Información de fecha y hora */}
-        <motion.div 
-          variants={itemVariants}
-          className="mb-4 md:mb-6 p-4 bg-amber-100 rounded-lg border-2 border-amber-700"
+        {/* Información del evento */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isLoaded ? "visible" : "hidden"}
+          className="info-section"
         >
-          <h2 className="text-xl md:text-2xl font-bold text-amber-900 mb-2 text-center">Fecha y Hora</h2>
-          <p className="text-amber-800 text-center text-base md:text-lg">Sábado, 15 de Junio</p>
-          <p className="text-amber-800 text-center text-base md:text-lg">4:00 PM</p>
+          <div className="cards-grid">
+            
+            {/* Fecha y Hora */}
+            <motion.div
+              variants={itemVariants}
+              className="info-card"
+            >
+              <h2 className="card-title font-cowboy">
+                📅 Fecha y Hora
+              </h2>
+              <div className="space-y-3">
+                <p className="card-content font-cowboy">
+                  Viernes, 5 de Septiembre
+                </p>
+                <p className="card-content font-cowboy">
+                  6:00 PM
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Ubicación */}
+            <motion.div
+              variants={itemVariants}
+              className="info-card"
+            >
+              <h2 className="card-title font-cowboy">
+                🏠 Ubicación
+              </h2>
+              <p className="card-content font-cowboy mb-6">
+                Salón Orcelliss (De rey Orihuela)
+              </p>
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                href="https://maps.app.goo.gl/PydWSJ1ahUyZMqhp7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary font-cowboy"
+              >
+                🗺️ Ver en Google Maps
+              </motion.a>
+            </motion.div>
+
+            {/* Mesa de Regalos */}
+            <motion.div
+              variants={itemVariants}
+              className="info-card"
+            >
+              <h2 className="card-title font-cowboy">
+                🎁 Mesa de Regalos
+              </h2>
+              <p className="card-content font-cowboy mb-6">
+                Tu presencia es mi mejor regalo, pero si quieres traer algo...
+              </p>
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                href="#mesa-de-regalos"
+                className="btn-primary font-cowboy"
+              >
+                Ver opciones de regalos
+              </motion.a>
+            </motion.div>
+
+            {/* Bebidas */}
+            <motion.div
+              variants={itemVariants}
+              className="info-card"
+            >
+              <h2 className="card-title font-cowboy">
+                🍺 Bebidas
+              </h2>
+              <p className="card-content font-cowboy mb-6">
+                Habrá bebidas alcohólicas disponibles, pero si quieres traer algo más, ¡está perfecto!
+              </p>
+
+            </motion.div>
+
+            {/* Vestimenta Vaquera */}
+            <motion.div
+              variants={itemVariants}
+              className="info-card"
+            >
+              <h2 className="card-title font-cowboy">
+                🤠 Vestimenta Vaquera
+              </h2>
+              <p className="card-content font-cowboy mb-6">
+                ¡Desempolven sus sombreros y sus botas! La temática de la fiesta es vestimenta vaquera.
+              </p>
+
+            </motion.div>
+          </div>
         </motion.div>
 
-        {/* Ubicación con botón a Google Maps */}
-        <motion.div 
-          variants={itemVariants}
-          className="mb-4 md:mb-6 p-4 bg-amber-100 rounded-lg border-2 border-amber-700"
+        {/* Confirmación de asistencia */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2, duration: 0.8 }}
+          className="confirmation-card"
         >
-          <h2 className="text-xl md:text-2xl font-bold text-amber-900 mb-2 text-center">Ubicación</h2>
-          <p className="text-amber-800 text-center mb-3 md:mb-4 text-base md:text-lg">Salón El Corral</p>
+          <p className="confirmation-text font-cowboy mb-4">
+            ¡Confirma tu asistencia antes del 1 de Septiembre!
+          </p>
           <div className="text-center">
             <motion.a
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              href="https://goo.gl/maps/example"
+              href="https://wa.me/525592311815?text=¡Hola! Confirmo mi asistencia a tu cumpleaños #28 🎉🤠"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-5 py-2 md:px-6 md:py-3 bg-amber-700 text-amber-50 font-bold rounded-lg shadow-md hover:bg-amber-800 transition-colors text-sm md:text-base"
+              className="whatsapp-btn font-cowboy"
             >
-              Ver en Google Maps
+              <span className="mr-2 text-white">📱</span>
+              Confirmar asistencia
             </motion.a>
           </div>
         </motion.div>
+      </div>
 
-        {/* Mesa de regalos */}
-        <motion.div 
-          variants={itemVariants}
-          className="p-4 bg-amber-100 rounded-lg border-2 border-amber-700"
-        >
-          <h2 className="text-xl md:text-2xl font-bold text-amber-900 mb-2 text-center">Mesa de Regalos</h2>
-          <p className="text-amber-800 text-center mb-3 md:mb-4 text-base md:text-lg">Tu presencia es mi mejor regalo</p>
-          <div className="text-center">
-            <motion.a
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              href="#mesa-de-regalos"
-              className="inline-block px-5 py-2 md:px-6 md:py-3 bg-amber-700 text-amber-50 font-bold rounded-lg shadow-md hover:bg-amber-800 transition-colors text-sm md:text-base"
-            >
-              Ver opciones
-            </motion.a>
-          </div>
-        </motion.div>
-
-        {/* Decoraciones vaqueras */}
-        <div className="absolute -top-6 -left-6 text-4xl md:text-6xl text-amber-900">🤠</div>
-        <div className="absolute -bottom-6 -right-6 text-4xl md:text-6xl text-amber-900">🐄</div>
-        <div className="absolute -top-6 -right-6 text-3xl md:text-5xl text-amber-900">🎵</div>
-        <div className="absolute -bottom-6 -left-6 text-3xl md:text-5xl text-amber-900">🎁</div>
-      </motion.div>
-
-      {/* Texto de confirmación de asistencia (solo visible en desktop) */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="relative z-10 mt-6 bg-amber-50 bg-opacity-95 rounded-xl p-4 max-w-md w-full border-4 border-amber-900 hidden md:block"
-      >
-        <p className="text-center text-amber-800 font-bold">¡Confirma tu asistencia antes del 10 de Junio!</p>
-      </motion.div>
+      {/* Decoraciones vaqueras flotantes */}
+      <div className="fixed top-4 left-4 text-4xl lg:text-5xl text-amber-900 z-20 animate-bounce">🤠</div>
+      <div className="fixed top-4 right-4 text-4xl lg:text-5xl text-amber-900 z-20 animate-bounce" style={{ animationDelay: '0.5s' }}>🐄</div>
+      <div className="fixed bottom-4 left-4 text-4xl lg:text-5xl text-amber-900 z-20 animate-bounce" style={{ animationDelay: '1s' }}>🎵</div>
+      <div className="fixed bottom-4 right-4 text-4xl lg:text-5xl text-amber-900 z-20 animate-bounce" style={{ animationDelay: '1.5s' }}>🎁</div>
 
       {/* Fuente personalizada */}
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
-          body {
-            font-family: 'Rye', cursive;
-          }
         `}
       </style>
     </div>
